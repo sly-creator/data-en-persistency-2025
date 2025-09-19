@@ -15,24 +15,20 @@ import java.util.List;
 public class TestAdresDAO {
 
     public static void main(String[] args) {
-        try {
-            Connection conn = DriverManager.getConnection(
-                    "jdbc:postgresql://localhost:5432/ovchip", "postgres", "postgres"
-            );
+        try (Connection conn = DriverManager.getConnection(
+                "jdbc:postgresql://localhost:5432/ovchip", "postgres", "")) {
 
-            ReizigerDAO rdao = new ReizigerDAOPsql(conn);
             AdresDAO adao = new AdresDAOPsql(conn);
+            ReizigerDAO rdao = new ReizigerDAOPsql(conn, adao);   // <-- injectie, geen null
 
             testAdresDAO(adao, rdao);
-
-            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     private static void testAdresDAO(AdresDAO adao, ReizigerDAO rdao) throws SQLException {
-        System.out.println("\n---------- Test AdresDAO -------------");
+        System.out.println("\n Test AdresDAO");
 
         // Maak een reiziger voor de koppeling
         Reiziger r = new Reiziger(77, "G", "", "van Rijn",

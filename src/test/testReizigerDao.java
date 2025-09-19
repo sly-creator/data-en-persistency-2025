@@ -1,24 +1,28 @@
-
 import Domein.Reiziger;
 import Implementatie.ReizigerDAOPsql;
+import Implementatie.AdresDAOPsql;          // <-- toevoegen
+import Interfaces.AdresDAO;
 import Interfaces.ReizigerDAO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
 public class testReizigerDao {
 
     public static void main(String[] args) {
-        try {
-            Connection conn = DriverManager.getConnection(
-                    "jdbc:postgresql://localhost:5432/ovchip", "postgres", "postgres"
-            );
-            ReizigerDAO rdao = new ReizigerDAOPsql(conn);
+        try (Connection conn = DriverManager.getConnection(
+                "jdbc:postgresql://localhost:5432/ovchip", "postgres", "")) {
 
+            // 1) Eerst AdresDAO maken
+            AdresDAO adao = new AdresDAOPsql(conn);
+
+            // 2) Dan injecteren in ReizigerDAO
+            ReizigerDAO rdao = new ReizigerDAOPsql(conn, adao);
+
+            // 3) Testen
             testReizigerDAO(rdao);
 
         } catch (SQLException e) {
@@ -26,19 +30,10 @@ public class testReizigerDao {
         }
     }
 
-    /**
-     * P2. Reiziger DAO: persistentie van een klasse
-     *
-     * Deze methode test de CRUD-functionaliteit van de Reiziger DAO
-     *
-//     * @throws SQLException
-     */
-
     private static void testReizigerDAO(ReizigerDAO rdao) throws SQLException {
-        System.out.println("\n---------- Test ReizigerDAO -------------");
+        System.out.println("\n Test ReizigerDAO ");
 
-        // test findall
-        // Haal alle reizigers op uit de database
+        // findAll
         List<Reiziger> reizigers = rdao.findAll();
         System.out.println("[Test] ReizigerDAO.findAll() geeft de volgende reizigers:");
         for (Reiziger r : reizigers) {
@@ -46,7 +41,7 @@ public class testReizigerDao {
         }
         System.out.println();
 
-        // Maak een nieuwe reiziger aan en persisteer deze in de database
+        // save
         String gbdatum = "1981-03-14";
         Reiziger sietske = new Reiziger(77, "S", "", "Boers", LocalDate.parse(gbdatum));
         System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
@@ -54,46 +49,37 @@ public class testReizigerDao {
         reizigers = rdao.findAll();
         System.out.println(reizigers.size() + " reizigers\n");
 
-        // Voeg aanvullende tests van de ontbrekende CRUD-operaties in.
-
-        //save
-        List<Reiziger> AlleReizigersVoor = rdao.findAll();
-        int reizigerAantalVoor = AlleReizigersVoor.size();
-        Reiziger reiziger1 = new Reiziger(12,"S",null,"sloote",LocalDate.of(2003,8,2));
+        // extra save
+        List<Reiziger> alleVoor = rdao.findAll();
+        int aantalVoor = alleVoor.size();
+        Reiziger reiziger1 = new Reiziger(12, "S", null, "sloote", LocalDate.of(2003, 8, 2));
         rdao.save(reiziger1);
-        List<Reiziger> AlleReizigersNA = rdao.findAll();
-        int reizigerAantalNa = AlleReizigersNA.size();
-        if (reizigerAantalNa == reizigerAantalVoor + 1){
+        int aantalNa = rdao.findAll().size();
+        if (aantalNa == aantalVoor + 1) {
             System.out.println("nieuwe reiziger is toegevoegd");
         }
 
-        //  find by id
+        // findById
         Reiziger gevonden = rdao.findById(12);
         System.out.println(gevonden);
 
-        // geboortedatum
-        LocalDate testGbdatum = LocalDate.of(2003,8,2);
+        // findByGbdatum (laat zo als jouw interface LocalDate verwacht)
+        LocalDate testGbdatum = LocalDate.of(2003, 8, 2);
         List<Reiziger> metDatum = rdao.findByGbdatum(testGbdatum);
         System.out.println(metDatum);
 
-        //delete
+        // delete
         rdao.delete(reiziger1);
-//        rdao.delete(sietske);
-        if (rdao.findById(12) == null){
+        if (rdao.findById(12) == null) {
             System.out.println("reiziger is verwijdered");
         }
-        /// update
+
+        // update
         sietske.setTussenvoegsel("ss");
         rdao.update(sietske);
-        Reiziger updated = rdao.findById(sietske.getId());
-        if ("ss".equals(updated.getTussenvoegsel())) {
+        Reiziger updated = rdao.findById(77); // of sietske.getId()/getReizigerId, afhankelijk van jouw model
+        if (updated != null && "ss".equals(updated.getTussenvoegsel())) {
             System.out.println("nieuwe tussenvoegsel is = " + updated.getTussenvoegsel());
         }
-
-
-
-
     }
-
-
 }

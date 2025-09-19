@@ -1,7 +1,9 @@
 package Domein;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Reiziger {
 
@@ -10,7 +12,9 @@ public class Reiziger {
     private String tussenvoegsel;
     private String achternaam;
     private LocalDate geboortedatum;
+    private Adres adres;
 
+    private final List<OV_Chipkaart> ovChipkaarten = new ArrayList<>();
     public Reiziger(){
 
     }
@@ -21,6 +25,7 @@ public class Reiziger {
         this.geboortedatum = geboortedatum;
         this.voorletter = voorletter;
         this.tussenvoegsel = tussenvoegsel;
+
     }
 
     //getter en setters
@@ -66,13 +71,52 @@ public class Reiziger {
 
     @Override
     public String toString() {
+        String adresInfo;
+        if (adres == null) {
+            adresInfo = "geen adres";
+        } else {
+            adresInfo = adres.toString();
+        }
+
         return "Reiziger{" +
                 "id= " + id +
                 ", voorletters= '" + voorletter + '\'' +
                 ", tussenvoegsel= '" + tussenvoegsel + '\'' +
                 ", achternaam= '" + achternaam + '\'' +
                 ", geboortedatum= " + geboortedatum +
+                ", adres= " + adresInfo +
+                ", ovchipkaart "+ ovChipkaarten +
                 '}';
     }
 
+    public void setAdres(Adres adres) {
+        this.adres = adres;
+    }
+
+    public Adres getAdres() {
+        return adres;
+    }
+
+    public void addOvChipkaart(OV_Chipkaart kaart) {
+        if (kaart == null) return;
+        if (!ovChipkaarten.contains(kaart)) {
+            ovChipkaarten.add(kaart);
+        }
+        if (kaart.getReiziger() != this) {
+            kaart.setReiziger(this);
+        }
+    }
+
+    public void removeOvChipkaart(OV_Chipkaart kaart) {
+        if (kaart == null) return;
+        ovChipkaarten.remove(kaart);
+        if (kaart.getReiziger() == this) {
+            kaart.setReiziger(null);
+        }
+
+    }
+
+    public List<OV_Chipkaart> getOvChipkaarten() {
+        return ovChipkaarten;
+    }
 }

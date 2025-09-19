@@ -3,6 +3,7 @@ package Implementatie;
 import Domein.Adres;
 import Domein.Reiziger;
 import Interfaces.AdresDAO;
+import Interfaces.ReizigerDAO;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.Optional;
 
 public class AdresDAOPsql implements AdresDAO {
     private Connection conn;
-
+    private  ReizigerDAO reizigerDAO;
     public AdresDAOPsql(Connection conn) {
         this.conn = conn;
     }
@@ -91,23 +92,19 @@ public class AdresDAOPsql implements AdresDAO {
     }
     @Override
     public List<Adres> findAll() {
-        String sql = "SELECT * FROM adres";
-        List<Adres> list = new ArrayList<>();
-        try (PreparedStatement pst = conn.prepareStatement(sql);
-             ResultSet rs = pst.executeQuery()) {
-            while (rs.next()) {
-                int adresId     = rs.getInt("adres_id");
-                String pc       = rs.getString("postcode");
-                String huisnr   = rs.getString("huisnummer");
-                String straat   = rs.getString("straat");
-                String woonpl   = rs.getString("woonplaats");
-                list.add(new Adres(adresId, pc, huisnr, straat, woonpl, null));
-            }
-        } catch (SQLException e) {
-            System.err.println("e findall adres " + e.getMessage());
-        }
-        return list;
-    }
+        List<Reiziger> reizigers = reizigerDAO.findAll();
+        List<Adres> result = new ArrayList<>();
 
+        for (Reiziger reiziger : reizigers) {
+            Adres adres = reiziger.getAdres();
+            if (adres != null) {
+                if (adres.getReiziger() == null) {
+                    adres.setReiziger(reiziger);
+                }
+                result.add(adres);
+            }
+        }
+        return result;
+    }
 
 }
