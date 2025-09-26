@@ -3,25 +3,29 @@ package Domein;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class OV_Chipkaart {
     private int kaartNummer;
     private LocalDate geldig_Tot;
     private int klasse;
-    private BigDecimal saldo;
+    private double saldo;
     private Reiziger reiziger;
 
     public OV_Chipkaart() {}
 
-    public OV_Chipkaart(int kaartNummer, LocalDate geldig_Tot, int klasse, BigDecimal saldo) {
+    private List<Product> producten = new ArrayList<>();
+
+    public OV_Chipkaart(int kaartNummer, LocalDate geldig_Tot, int klasse, double saldo) {
         this.kaartNummer = kaartNummer;
         this.geldig_Tot = geldig_Tot;
         this.klasse = klasse;
         this.saldo = saldo;
     }
 
-    public OV_Chipkaart(int kaartNummer, LocalDate geldig_Tot, int klasse, BigDecimal saldo, Reiziger reiziger) {
+    public OV_Chipkaart(int kaartNummer, LocalDate geldig_Tot, int klasse, double saldo, Reiziger reiziger) {
         this.kaartNummer = kaartNummer;
         this.geldig_Tot = geldig_Tot;
         this.klasse = klasse;
@@ -45,16 +49,34 @@ public class OV_Chipkaart {
     public int getKlasse() { return klasse; }
     public void setKlasse(int klasse) { this.klasse = klasse; }
 
-    public BigDecimal getSaldo() {
-        if(saldo == null){
-            return saldo = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
-        }
+    public double getSaldo() {
         return saldo; }
-    public void setSaldo(BigDecimal saldo) { this.saldo = saldo; }
+    public void setSaldo(double saldo) { this.saldo = saldo; }
 
     public Reiziger getReiziger() { return reiziger; }
     public void setReiziger(Reiziger reiziger) {
         this.reiziger = reiziger; }
+
+    public void addProduct(Product product) {
+        if (product == null) return;
+        if (!producten.contains(product)) {
+            producten.add(product);
+            if (!product.getOvChipkaarten().contains(this)) {
+                product.getOvChipkaarten().add(this);
+            }
+        }
+    }
+
+    public List<Product> getProducten() {
+        return producten;
+    }
+
+    public void removeProduct(Product product) {
+        if (product == null) return;
+        if (producten.remove(product)) {
+            product.removeOvChipkaart(this);
+        }
+    }
 
     @Override
     public String toString() {
@@ -64,6 +86,7 @@ public class OV_Chipkaart {
                 ", klasse=" + klasse +
                 ", saldo=" + saldo +
                 ", reiziger" +reiziger.getAchternaam() +
+                ". producten"+ getProducten() +
                 '}';
     }
 }

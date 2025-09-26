@@ -22,7 +22,7 @@ public class Adres {
         this.id = id;
         this.postcode = postcode;
         this.huisnummer = huisnummer;
-        this.straat = straat;
+        this.straat =    straat;
         this.woonplaats = woonplaats;
         this.reiziger = reiziger;
     }

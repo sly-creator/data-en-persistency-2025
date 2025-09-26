@@ -14,7 +14,7 @@ public class Reiziger {
     private LocalDate geboortedatum;
     private Adres adres;
 
-    private final List<OV_Chipkaart> ovChipkaarten = new ArrayList<>();
+    private List<OV_Chipkaart> ovChipkaarten = new ArrayList<>();
     public Reiziger(){
 
     }

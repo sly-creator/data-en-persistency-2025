@@ -32,8 +32,8 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     //geen primary key veranderen
     @Override
     public boolean save(Reiziger reiziger) {
-        Adres huidigAdres = adresDAO.findByReiziger(reiziger);
-        Adres nieuwAdres  = reiziger.getAdres();
+//        Adres huidigAdres = adresDAO.findByReiziger(reiziger);
+//        Adres nieuwAdres  = reiziger.getAdres();
 
         try {
             String sql = "INSERT INTO reiziger(reiziger_id, voorletters, tussenvoegsel, achternaam, geboortedatum) VALUES (?, ?, ?, ?, ?)";
@@ -43,23 +43,29 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             pst.setString(3, reiziger.getTussenvoegsel());
             pst.setString(4, reiziger.getAchternaam());
             pst.setDate(5, Date.valueOf(reiziger.getGeboortedatum()));
-            if (nieuwAdres == null && huidigAdres != null) {
-                adresDAO.delete(huidigAdres);
-            }
-            if (nieuwAdres != null) {
-                nieuwAdres.setReiziger(reiziger);
-                adresDAO.save(nieuwAdres);
+
+            if (reiziger.getAdres() != null) {
+                Adres adres = reiziger.getAdres();
+                adres.setReiziger(reiziger);
+                adresDAO.update(adres);
                 for (OV_Chipkaart kaart : reiziger.getOvChipkaarten()) {
                     kaart.setReiziger(reiziger);
-                    ovChipkaartDAO.save(kaart);
+                    ovChipkaartDAO.update(kaart);
                 }
+
+//            if (nieuwAdres != null) {
+//                nieuwAdres.setReiziger(reiziger);
+//                adresDAO.save(nieuwAdres);
+//                for (OV_Chipkaart kaart : reiziger.getOvChipkaarten()) {
+//                    kaart.setReiziger(reiziger);
+//                    ovChipkaartDAO.update(kaart);
+//                }
             }
                 return pst.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("e save " + e.getMessage());
             return false;
         }
-
     }
 
 
@@ -85,7 +91,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
                 adresDAO.save(nieuwAdres);
                 for (OV_Chipkaart kaart : reiziger.getOvChipkaarten()) {
                     kaart.setReiziger(reiziger);
-                    ovChipkaartDAO.save(kaart);
+                    ovChipkaartDAO.update(kaart);
                 }
 
             }
