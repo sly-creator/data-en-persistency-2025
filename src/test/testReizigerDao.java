@@ -1,6 +1,6 @@
 import Domein.Reiziger;
 import Implementatie.ReizigerDAOPsql;
-import Implementatie.AdresDAOPsql;          // <-- toevoegen
+import Implementatie.AdresDAOPsql;
 import Interfaces.AdresDAO;
 import Interfaces.ReizigerDAO;
 
@@ -14,7 +14,7 @@ public class testReizigerDao {
 
     public static void main(String[] args) {
         try (Connection conn = DriverManager.getConnection(
-                "jdbc:postgresql://localhost:5432/ovchip", "postgres", "")) {
+                "jdbc:postgresql://localhost:5432/ovchip", "postgres", "postgres")) {
 
             // 1) Eerst AdresDAO maken
             AdresDAO adao = new AdresDAOPsql(conn);
@@ -63,7 +63,7 @@ public class testReizigerDao {
         Reiziger gevonden = rdao.findById(12);
         System.out.println(gevonden);
 
-        // findByGbdatum (laat zo als jouw interface LocalDate verwacht)
+        // findByGbdatum
         LocalDate testGbdatum = LocalDate.of(2003, 8, 2);
         List<Reiziger> metDatum = rdao.findByGbdatum(testGbdatum);
         System.out.println(metDatum);
@@ -77,7 +77,7 @@ public class testReizigerDao {
         // update
         sietske.setTussenvoegsel("ss");
         rdao.update(sietske);
-        Reiziger updated = rdao.findById(77); // of sietske.getId()/getReizigerId, afhankelijk van jouw model
+        Reiziger updated = rdao.findById(77);
         if (updated != null && "ss".equals(updated.getTussenvoegsel())) {
             System.out.println("nieuwe tussenvoegsel is = " + updated.getTussenvoegsel());
         }

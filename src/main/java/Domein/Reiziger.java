@@ -2,7 +2,6 @@ package Domein;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Reiziger {
@@ -89,13 +88,9 @@ public class Reiziger {
                 '}';
     }
 
-    public void setAdres(Adres adres) {
-        this.adres = adres;
-    }
+    public void setAdres(Adres adres) {this.adres = adres;}
 
-    public Adres getAdres() {
-        return adres;
-    }
+    public Adres getAdres() {return adres;}
 
     public void addOvChipkaart(OV_Chipkaart kaart) {
         if (kaart == null) return;
@@ -105,15 +100,6 @@ public class Reiziger {
         if (kaart.getReiziger() != this) {
             kaart.setReiziger(this);
         }
-    }
-
-    public void removeOvChipkaart(OV_Chipkaart kaart) {
-        if (kaart == null) return;
-        ovChipkaarten.remove(kaart);
-        if (kaart.getReiziger() == this) {
-            kaart.setReiziger(null);
-        }
-
     }
 
     public List<OV_Chipkaart> getOvChipkaarten() {

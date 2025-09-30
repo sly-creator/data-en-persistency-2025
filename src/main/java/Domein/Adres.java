@@ -40,8 +40,6 @@ public class Adres {
 
     public String getHuisnummer()
     {return huisnummer;}
-    public void setHuisnummer(String huisnummer)
-    {this.huisnummer = huisnummer; }
 
     public String getStraat()
     {return straat;}
@@ -56,9 +54,6 @@ public class Adres {
     {return reiziger;}
     public void setReiziger(Reiziger reiziger)
     {this.reiziger = reiziger;}
-
-    public void setStraat(String straat)
-    {this.straat = straat;}
 
 
 

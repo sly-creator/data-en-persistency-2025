@@ -16,10 +16,10 @@ public class TestAdresDAO {
 
     public static void main(String[] args) {
         try (Connection conn = DriverManager.getConnection(
-                "jdbc:postgresql://localhost:5432/ovchip", "postgres", "")) {
+                "jdbc:postgresql://localhost:5432/ovchip", "postgres", "postgres")) {
 
             AdresDAO adao = new AdresDAOPsql(conn);
-            ReizigerDAO rdao = new ReizigerDAOPsql(conn, adao);   // <-- injectie, geen null
+            ReizigerDAO rdao = new ReizigerDAOPsql(conn, adao);
 
             testAdresDAO(adao, rdao);
         } catch (SQLException e) {

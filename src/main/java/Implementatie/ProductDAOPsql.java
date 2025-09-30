@@ -2,6 +2,7 @@ package Implementatie;
 
 import Domein.OV_Chipkaart;
 import Domein.Product;
+import Domein.Reiziger;
 import Interfaces.ProductDAO;
 
 import java.sql.*;
@@ -135,22 +136,63 @@ public class ProductDAOPsql implements ProductDAO {
 
     @Override
     public List<Product> findAll() {
-        List<Product> producten = new ArrayList<>();
-        String sql = "SELECT * FROM product";
-        try (Statement st = conn.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
-            while (rs.next()) {
-                producten.add(new Product(
-                        rs.getLong("product_nummer"),
-                        rs.getString("naam"),
-                        rs.getString("beschrijving"),
-                        rs.getDouble("prijs")
-                ));
-            }
+        String sql = """
+        SELECT prod.product_nummer, prod.naam, prod.beschrijving, prod.prijs, ov.kaart_nummer, ov.geldig_tot, ov.klasse, ov.saldo,
+               reiz.reiziger_id, reiz.voorletters, reiz.tussenvoegsel, reiz.achternaam, reiz.geboortedatum
+        FROM product prod
+        LEFT JOIN ov_chipkaart_product op ON prod.product_nummer = op.product_nummer
+        LEFT JOIN ov_chipkaart ov ON ov.kaart_nummer = op.kaart_nummer
+        LEFT JOIN reiziger reiz ON reiz.reiziger_id = ov.reiziger_id
+        ORDER BY prod.product_nummer
+        """;
 
+        List<Product> producten = new ArrayList<>();
+
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                long productNummer = rs.getLong("product_nummer");
+
+                Product product = null;
+                for (Product bestaatAl : producten) {
+                    if (bestaatAl.getProductNummer() == productNummer) {
+                        product = bestaatAl;
+                        break;}}
+
+                if (product == null) {
+                    product = new Product(
+                            productNummer,
+                            rs.getString("naam"),
+                            rs.getString("beschrijving"),
+                            rs.getDouble("prijs"));
+                    producten.add(product);}
+
+                int kaartNummerr = rs.getInt("kaart_nummer");
+                if (!rs.wasNull()) {
+                    Reiziger reiziger = null;
+                    int reizigerId = rs.getInt("reiziger_id");
+                    // wasnull of integer moeten gebruiken
+                    if (!rs.wasNull()) {
+                        reiziger = new Reiziger();
+                        reiziger.setId(reizigerId);
+                        reiziger.setVoorletter(rs.getString("voorletters"));
+                        reiziger.setTussenvoegsel(rs.getString("tussenvoegsel"));
+                        reiziger.setAchternaam(rs.getString("achternaam"));
+                        Date geboortedatum = rs.getDate("geboortedatum");
+                        if (geboortedatum != null) reiziger.setGeboortedatum(geboortedatum.toLocalDate());}
+
+                    Date geldig_tot = rs.getDate("geldig_tot");
+                    OV_Chipkaart kaart = new OV_Chipkaart(
+                            kaartNummerr,
+                            geldig_tot != null ? geldig_tot.toLocalDate() : null,
+                            rs.getInt("klasse"),
+                            rs.getDouble("saldo"),
+                            reiziger);
+                    product.addOvChipkaart(kaart);
+                }}
         } catch (SQLException e) {
-            System.err.println(" Product findAll: " + e.getMessage());
-        }
+            System.err.println("Product findAll:  " + e.getMessage());}
         return producten;
     }
 }

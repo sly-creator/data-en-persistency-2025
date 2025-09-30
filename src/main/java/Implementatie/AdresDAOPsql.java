@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class AdresDAOPsql implements AdresDAO {
     private Connection conn;
-    private  ReizigerDAO reizigerDAO;
+    private ReizigerDAO reizigerDAO;
     public AdresDAOPsql(Connection conn) {
         this.conn = conn;
     }

@@ -1,10 +1,7 @@
 package Domein;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class OV_Chipkaart {
@@ -33,50 +30,34 @@ public class OV_Chipkaart {
         this.reiziger = reiziger;
     }
 
-
-
-    // getters & setters
     public long getKaartNummer() { return kaartNummer; }
-    public void setKaartNummer(int kaartNummer) { this.kaartNummer = kaartNummer; }
+
     public LocalDate getGeldigTot() {
         if (geldig_Tot == null) {
             return null;
         }
         return geldig_Tot; }
-    public void setGeldigTot(LocalDate geldig_Tot) {
-        this.geldig_Tot = geldig_Tot; }
 
     public int getKlasse() { return klasse; }
+
     public void setKlasse(int klasse) { this.klasse = klasse; }
 
-    public double getSaldo() {
-        return saldo; }
+    public double getSaldo() {return saldo; }
+
     public void setSaldo(double saldo) { this.saldo = saldo; }
 
     public Reiziger getReiziger() { return reiziger; }
-    public void setReiziger(Reiziger reiziger) {
-        this.reiziger = reiziger; }
 
-    public void addProduct(Product product) {
-        if (product == null) return;
-        if (!producten.contains(product)) {
-            producten.add(product);
-            if (!product.getOvChipkaarten().contains(this)) {
-                product.getOvChipkaarten().add(this);
-            }
-        }
-    }
+    public void setReiziger(Reiziger reiziger) {this.reiziger = reiziger; }
 
-    public List<Product> getProducten() {
-        return producten;
-    }
+
+    public List<Product> getProducten() {return producten;}
 
     public void removeProduct(Product product) {
         if (product == null) return;
         if (producten.remove(product)) {
             product.removeOvChipkaart(this);
-        }
-    }
+        }}
 
     @Override
     public String toString() {

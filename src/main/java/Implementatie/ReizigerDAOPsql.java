@@ -28,13 +28,8 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     }
 
 
-    //lange regels querys over meerdere regels
-    //geen primary key veranderen
     @Override
     public boolean save(Reiziger reiziger) {
-//        Adres huidigAdres = adresDAO.findByReiziger(reiziger);
-//        Adres nieuwAdres  = reiziger.getAdres();
-
         try {
             String sql = "INSERT INTO reiziger(reiziger_id, voorletters, tussenvoegsel, achternaam, geboortedatum) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement pst = conn.prepareStatement(sql);
@@ -52,14 +47,6 @@ public class ReizigerDAOPsql implements ReizigerDAO {
                     kaart.setReiziger(reiziger);
                     ovChipkaartDAO.update(kaart);
                 }
-
-//            if (nieuwAdres != null) {
-//                nieuwAdres.setReiziger(reiziger);
-//                adresDAO.save(nieuwAdres);
-//                for (OV_Chipkaart kaart : reiziger.getOvChipkaarten()) {
-//                    kaart.setReiziger(reiziger);
-//                    ovChipkaartDAO.update(kaart);
-//                }
             }
                 return pst.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -206,9 +193,5 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             System.err.println(" e findAll " + e.getMessage());
         }
         return reizigers;
-    }
-
-    public void setAdresDao(AdresDAO adresDAO){
-        this.adresDAO = adresDAO;
     }
 }
