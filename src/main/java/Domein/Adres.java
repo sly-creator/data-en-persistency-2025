@@ -47,8 +47,6 @@ public class Adres {
 
     public String getWoonplaats()
     {return woonplaats;}
-    public void setWoonplaats(String woonplaats)
-    {this.woonplaats = woonplaats;}
 
     public Reiziger getReiziger()
     {return reiziger;}

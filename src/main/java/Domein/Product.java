@@ -59,11 +59,27 @@ public class Product {
     }
     @Override
     public String toString() {
-        return "Product{" +
-                "productNummer=" + productNummer +
-                ", naam='" + naam + '\'' +
-                ", beschrijving='" + beschrijving + '\'' +
-                ", prijs=" + prijs +
-                '}';
+        StringBuilder stringBuilderb = new StringBuilder();
+        stringBuilderb.append("Product{productNummer=").append(productNummer)
+                .append(", naam='").append(naam).append('\'')
+                .append(", beschrijving='").append(beschrijving).append('\'')
+                .append(", prijs=").append(prijs)
+                .append(", ovChipkaarten=[");
+
+        // Toon voor elke kaart het nummer + saldo (zonder oneindige lus)
+        for (OV_Chipkaart kaart : ovChipkaarten) {
+            stringBuilderb.append("(OVChipkaart ")
+                    .append(kaart.getKaartNummer())
+                    .append(", saldo=")
+                    .append(String.format("%.2f", kaart.getSaldo()))
+                    .append("), ");
+        }
+
+        if (!ovChipkaarten.isEmpty()) {
+            stringBuilderb.setLength(stringBuilderb.length() - 2);
+        }
+
+        stringBuilderb.append("]}");
+        return stringBuilderb.toString();
     }
 }

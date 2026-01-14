@@ -13,8 +13,9 @@ import java.util.Optional;
 public class AdresDAOPsql implements AdresDAO {
     private Connection conn;
     private ReizigerDAO reizigerDAO;
-    public AdresDAOPsql(Connection conn) {
+    public AdresDAOPsql(Connection conn,ReizigerDAO reizigerDAO) {
         this.conn = conn;
+        this.reizigerDAO = reizigerDAO;
     }
 
     @Override

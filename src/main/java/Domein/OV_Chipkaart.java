@@ -61,15 +61,17 @@ public class OV_Chipkaart {
 
     @Override
     public String toString() {
+        String reizigerNaam = (reiziger == null ? "null" : reiziger.getAchternaam());
         return "OVChipkaart{" +
                 "kaartNummer=" + kaartNummer +
                 ", geldigTot=" + geldig_Tot +
                 ", klasse=" + klasse +
                 ", saldo=" + saldo +
-                ", reiziger" +reiziger.getAchternaam() +
-                ". producten"+ getProducten() +
+                ", reiziger=" + reizigerNaam +
+                ", producten=" + producten +
                 '}';
     }
+
 }
 
 
